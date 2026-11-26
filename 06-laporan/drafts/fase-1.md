@@ -10,7 +10,7 @@ Penyakit kardiovaskular, termasuk penyakit jantung koroner, merupakan penyebab k
 
 Di sisi lain, rumah sakit sudah mengumpulkan banyak data pemeriksaan rutin, seperti usia, tekanan darah, kadar kolesterol, hasil elektrokardiogram (EKG), dan hasil tes latihan jantung. Data ini dapat dimanfaatkan untuk membangun sistem pendukung keputusan klinis (*Clinical Decision Support System*) berbasis *machine learning*. Sistem seperti ini dapat membantu dokter menandai pasien yang berisiko tinggi sejak awal, sehingga pasien tersebut bisa diprioritaskan untuk pemeriksaan lanjutan.
 
-Dalam sistem skrining medis, kesalahan prediksi tidak memiliki dampak yang sama. Pasien sakit yang diprediksi sehat (*False Negative*) dapat pulang tanpa penanganan dan berisiko fatal. Sebaliknya, pasien sehat yang diprediksi sakit (*False Positive*) hanya perlu menjalani pemeriksaan tambahan. Karena itu, penelitian ini menekankan kemampuan model dalam mendeteksi pasien sakit, yang diukur dengan metrik *Recall* kelas positif.
+Dalam sistem skrining medis, kesalahan prediksi tidak memiliki dampak yang sama. Pasien sakit yang diprediksi sehat (*False Negative*) dapat pulang tanpa penanganan dan berisiko fatal. Sebaliknya, pasien sehat yang diprediksi sakit (*False Positive*) perlu menjalani pemeriksaan tambahan. Hal ini menambah biaya, waktu, dan kecemasan pasien, dan beberapa pemeriksaan lanjutan seperti angiografi koroner juga memiliki risiko, tetapi risikonya jauh lebih kecil dibanding pasien sakit yang terlewat. Karena itu, penelitian ini menekankan kemampuan model dalam mendeteksi pasien sakit, yang diukur dengan metrik *Recall* kelas positif.
 
 ### 1.2 Rumusan Masalah
 
