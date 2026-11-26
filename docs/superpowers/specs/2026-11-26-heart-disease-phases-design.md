@@ -11,7 +11,7 @@ Pengerjaan per fase dipilih supaya setiap fase bisa direview dan dipahami sebelu
 
 ## Deliverable
 
-1. Notebook `03-notebook/KelompokX_Heart_Disease_Prediction.ipynb`. `X` diganti nomor atau nama kelompok saat finalisasi. Notebook harus bisa Run All dari awal sampai akhir tanpa error.
+1. Notebook `03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb`. Nama file sudah memakai nomor kelompok (Kelompok 6). Notebook harus bisa Run All dari awal sampai akhir tanpa error.
 2. Laporan Teknis & Bisnis (PDF) dengan bab: Cover, Pendahuluan, Metodologi, Hasil & Pembahasan, Kesimpulan & Rekomendasi Klinis, Daftar Pustaka.
 3. Slide presentasi (PPTX, diekspor juga ke PDF) dengan alur: Masalah Klinis, Analisis Data, Solusi Model, Dampak & Rekomendasi Medis.
 
@@ -31,7 +31,7 @@ Pengerjaan per fase dipilih supaya setiap fase bisa direview dan dipahami sebelu
 
 - Data leakage: scaler atau imputer di-fit memakai data uji atau seluruh data.
 - Run All error di notebook final.
-- Interpretasi faktor risiko yang mengabaikan anomali label `target` (lihat bagian Constraints), sehingga kesimpulan medisnya salah tanpa disadari.
+- Interpretasi faktor risiko yang memakai label atau kamus data versi Kaggle tanpa koreksi (lihat bagian Constraints), sehingga kesimpulan medisnya terbalik tanpa disadari.
 - Model hasil tuning yang Recall-nya tinggi karena menebak hampir semua pasien sebagai kelas 1 (precision ambruk), lalu tetap dilaporkan sebagai model terbaik.
 
 ## Constraints
@@ -40,7 +40,8 @@ Pengerjaan per fase dipilih supaya setiap fase bisa direview dan dipahami sebelu
 - Temuan data yang wajib ditangani dan dibahas:
   - 1 baris duplikat.
   - `thal=0` (2 baris) dan `ca=4` (5 baris) adalah kode yang tidak ada di dataset UCI asli, jadi dianggap missing value.
-  - Label `target` terlihat terbalik secara medis. Pasien `target=1` punya rata-rata `thalach` lebih tinggi (158 vs 139), `oldpeak` lebih rendah (0.58 vs 1.59), dan `exang` lebih jarang (0.14 vs 0.55). Ini adalah masalah yang sudah dikenal pada dataset versi Kaggle.
+  - Label `target` versi Kaggle terbalik total. Hasil pencocokan 303 baris dengan `processed.cleveland.data` dari UCI (kunci `age, trestbps, chol, thalach, oldpeak`, cocok satu-satu) menunjukkan semua 165 baris `target=1` adalah pasien sehat (`num=0`) di data asli, dan semua 138 baris `target=0` adalah pasien sakit.
+  - Kamus data `cp` dan `thal` versi Kaggle juga keliru. Arti yang benar: `cp` 0 = asymptomatic, 1 = atypical angina, 2 = non-anginal pain, 3 = typical angina; `thal` 1 = fixed defect, 2 = normal, 3 = reversible defect.
 - Environment: Python 3.12 di `.venv` (dibuat dengan `uv`, sudah di-ignore git). Dependency dicatat di `requirements.txt` supaya anggota lain bisa install.
 - Notebook membaca dataset dengan path relatif `../02-dataset/heart_disease.csv`, jadi notebook harus dijalankan dari folder `03-notebook`.
 
@@ -60,7 +61,7 @@ User memilih A. Untuk menghindari conflict, anggota lain mengirim kode mereka, l
 - Git: setiap fase dikerjakan di branch sendiri (`fase-1` sampai `fase-5`), lalu di-merge ke `main` saat fasenya selesai. Persiapan awal (dokumen ini, `requirements.txt`) ada di branch `setup`.
 - Commit message ditulis dalam bahasa Indonesia dengan prefix fase, contohnya `feat(fase-1): tambah grafik distribusi target`. Tipe commit (`feat`, `fix`, `docs`, `chore`) tetap memakai keyword standar Conventional Commits. Persiapan memakai scope `setup`, finalisasi memakai scope `final`.
 - Semua laporan, slide, Markdown notebook, dan dokumentasi di repo ditulis dalam bahasa Indonesia.
-- Label `target` tetap mengikuti panduan (1 = ada penyakit jantung). Anomalinya dibahas di Markdown Fase 1 dan Fase 5.
+- (Direvisi 2026-11-26 setelah review Fase 1) Label `target` dibalik di notebook (`1 - target`) supaya `1` benar-benar berarti ada penyakit jantung, sesuai definisi panduan. File `02-dataset/heart_disease.csv` tidak diubah. Bukti pencocokan ditampilkan di notebook memakai salinan data UCI asli di `02-dataset/uci-cleveland-asli.data`. Setelah koreksi: 138 pasien sakit, 164 sehat (setelah duplikat dihapus).
 - Baris duplikat dihapus. `thal=0` dan `ca=4` diubah jadi NaN, lalu diisi modus.
 - Markdown notebook, laporan, dan slide ditulis dalam bahasa Indonesia.
 
@@ -106,12 +107,12 @@ User memilih A. Untuk menghindari conflict, anggota lain mengirim kode mereka, l
 - Faktor risiko dari koefisien Logistic Regression dan Permutation Importance untuk SVM dan KNN, dengan interpretasi medis yang memperhitungkan anomali label.
 - Minimal 3 rekomendasi klinis.
 - Grafik ringkasan bergaya dashboard dan simulasi skrining beberapa pasien contoh.
-- Finalisasi: rename notebook, Run All bersih, susun laporan (DOCX lalu PDF) dan slide (PPTX lalu PDF) dari draf tiap fase.
+- Finalisasi: Run All bersih, susun laporan (DOCX lalu PDF) dan slide (PPTX lalu PDF) dari draf tiap fase.
 
 ## Struktur folder baru
 
 ```
-03-notebook/KelompokX_Heart_Disease_Prediction.ipynb
+03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb
 05-output/figures/fase-N-<nama-grafik>.png
 06-laporan/drafts/fase-N.md        # draf bab laporan + isi slide per fase
 06-laporan/Laporan_Heart_Disease.docx / .pdf
@@ -126,4 +127,4 @@ Notebook lama `03-notebook/heart-disease-uci-dataset.ipynb` (isinya latihan regr
 - Gaya visual grafik, misalnya palet warna dan ukuran.
 - Rentang nilai grid di luar yang disebut panduan, misalnya nilai `n_neighbors`.
 - Cara generate DOCX dan PPTX (misalnya `python-docx` dan `python-pptx`) serta cara konversi ke PDF (Microsoft Office terpasang di laptop user).
-- Isi Cover (nama anggota, NIM, nomor kelompok) diisi placeholder sampai user memberikan datanya.
+- Isi Cover memakai Kelompok 6. Nama anggota dan NIM diisi placeholder sampai user memberikan datanya.
