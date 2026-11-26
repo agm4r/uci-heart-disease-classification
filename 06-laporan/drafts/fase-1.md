@@ -35,13 +35,13 @@ Dalam sistem skrining medis, kesalahan prediksi tidak memiliki dampak yang sama.
 
 ### 2.1 Deskripsi Dataset
 
-Penelitian ini menggunakan Heart Disease UCI Dataset versi Kaggle. Dataset ini berisi 303 baris data pasien dan 14 kolom, terdiri atas 13 fitur hasil pemeriksaan dan 1 kolom target.
+Penelitian ini menggunakan Heart Disease UCI Dataset versi Kaggle. Dataset ini berisi 303 baris data pasien dan 14 kolom, terdiri atas 13 fitur hasil pemeriksaan dan 1 kolom target. Data aslinya berasal dari Cleveland Clinic Foundation dan tersedia di UCI Machine Learning Repository.
 
 | Kolom | Arti medis | Tipe |
 |---|---|---|
 | `age` | Usia pasien (tahun) | Numerik |
 | `sex` | Jenis kelamin (1 = laki-laki, 0 = perempuan) | Biner |
-| `cp` | Tipe nyeri dada (0 = typical angina, 1 = atypical angina, 2 = non-anginal pain, 3 = asymptomatic) | Nominal |
+| `cp` | Tipe nyeri dada (0 = asymptomatic, 1 = atypical angina, 2 = non-anginal pain, 3 = typical angina) | Nominal |
 | `trestbps` | Tekanan darah saat istirahat (mm Hg) | Numerik |
 | `chol` | Kadar kolesterol serum (mg/dl) | Numerik |
 | `fbs` | Gula darah puasa > 120 mg/dl (1 = ya, 0 = tidak) | Biner |
@@ -51,44 +51,64 @@ Penelitian ini menggunakan Heart Disease UCI Dataset versi Kaggle. Dataset ini b
 | `oldpeak` | Depresi segmen ST saat latihan dibanding saat istirahat | Numerik |
 | `slope` | Kemiringan segmen ST pada puncak latihan (0, 1, 2) | Nominal |
 | `ca` | Jumlah pembuluh darah utama yang terlihat lewat fluoroskopi (0 sampai 3) | Ordinal |
-| `thal` | Hasil tes thalium (1 = normal, 2 = fixed defect, 3 = reversible defect) | Nominal |
-| `target` | Diagnosis (1 = ada penyakit jantung, 0 = tidak ada) | Target |
+| `thal` | Hasil tes thalium (1 = fixed defect, 2 = normal, 3 = reversible defect) | Nominal |
+| `target` | Diagnosis (1 = ada penyakit jantung, 0 = tidak ada), setelah dikoreksi | Target |
+
+Arti kode `cp`, `thal`, dan `target` pada tabel di atas berbeda dengan dokumentasi yang beredar di halaman Kaggle. Kamus ini disusun dari hasil pencocokan dengan dataset UCI asli (lihat subbab 2.3).
 
 ### 2.2 Pemeriksaan Kualitas Data
 
-Inspeksi awal dengan `df.info()` dan `df.describe()` menunjukkan bahwa semua kolom bertipe numerik dan tidak ada sel yang kosong. Meski begitu, ada dua masalah kualitas data yang ditemukan:
+Inspeksi awal dengan `df.info()` dan `df.describe()` menunjukkan bahwa semua kolom bertipe numerik dan tidak ada sel yang kosong. Meski begitu, ditemukan dua masalah kualitas data:
 
 1. **Data duplikat.** Terdapat 1 baris duplikat (baris 163 dan 164 identik di seluruh 14 kolom). Baris duplikat dihapus agar pasien yang sama tidak terhitung dua kali, sehingga data menjadi 302 baris.
-2. **Missing value tersembunyi.** Kolom `thal` memiliki kode 0 sebanyak 2 baris, dan kolom `ca` memiliki kode 4 sebanyak 4 baris (setelah duplikat dihapus). Kedua kode ini tidak ada dalam definisi dataset UCI asli, dan pada dataset asli merupakan data yang hilang. Kode tersebut diubah menjadi nilai kosong (NaN). Pengisiannya dilakukan pada tahap *preprocessing* dengan modus yang dihitung hanya dari data latih, untuk mencegah *data leakage*.
+2. **Missing value tersembunyi.** Kolom `thal` memiliki kode 0 sebanyak 2 baris, dan kolom `ca` memiliki kode 4 sebanyak 4 baris (setelah duplikat dihapus). Kedua kode ini tidak ada dalam definisi dataset, dan hasil pencocokan pada subbab 2.3 membuktikan bahwa keduanya berasal dari data yang hilang (`?`) di dataset UCI asli. Kode tersebut diubah menjadi nilai kosong (NaN). Pengisiannya dilakukan pada tahap *preprocessing* dengan modus yang dihitung hanya dari data latih, untuk mencegah *data leakage*.
 
-### 2.3 Exploratory Data Analysis
+### 2.3 Koreksi Label Target
 
-**Distribusi kelas target** (Gambar `05-output/figures/fase-1-distribusi-target.png`). Dari 302 pasien, 164 pasien (54,3%) tergolong sakit jantung dan 138 pasien (45,7%) tergolong sehat. Kedua kelas cukup seimbang, sehingga teknik penyeimbangan data seperti SMOTE tidak diperlukan. Pembagian data latih dan data uji tetap dilakukan secara *stratified* agar proporsi kelas terjaga.
+Pada eksplorasi awal, pola data terlihat berkebalikan dengan pengetahuan medis. Kelompok `target = 1`, yang menurut dokumentasi Kaggle berarti sakit jantung, justru memiliki detak jantung maksimum lebih tinggi, depresi ST lebih rendah, dan lebih jarang mengalami angina saat olahraga.
 
-**Tipe nyeri dada terhadap diagnosis** (Gambar `05-output/figures/fase-1-cp-vs-target.png`). Hanya 27% pasien dengan `cp = 0` yang tergolong sakit jantung. Pada tipe nyeri dada lainnya, proporsi pasien sakit jantung jauh lebih tinggi, yaitu 82% (`cp = 1`), 79% (`cp = 2`), dan 70% (`cp = 3`). Hal ini menunjukkan bahwa tipe nyeri dada adalah fitur yang kuat untuk membedakan kedua kelas.
+Untuk memastikannya, dataset dicocokkan dengan sumber aslinya, yaitu file `processed.cleveland.data` dari UCI Machine Learning Repository. Pencocokan dilakukan berdasarkan lima kolom numerik (`age`, `trestbps`, `chol`, `thalach`, `oldpeak`), dan seluruh 303 baris cocok satu-satu dengan data asli. Pada data asli, diagnosis disimpan di kolom `num` (0 = tidak ada penyakit jantung, 1 sampai 4 = ada penyakit jantung).
+
+| Label versi Kaggle | Sehat di data asli (`num = 0`) | Sakit di data asli (`num > 0`) |
+|---|---|---|
+| `target = 0` | 0 | 138 |
+| `target = 1` | 165 | 0 |
+
+Hasil ini menunjukkan bahwa label `target` versi Kaggle terbalik 100%. Pencocokan yang sama juga menunjukkan bahwa kode `cp` dan `thal` versi Kaggle memiliki arti yang berbeda dengan dokumentasinya, sehingga kamus data pada subbab 2.1 disusun ulang berdasarkan data asli.
+
+Label kemudian dikoreksi di notebook dengan `target = 1 - target`, sehingga nilai `1` benar-benar berarti ada penyakit jantung, sesuai definisi pada panduan tugas. File dataset asli tidak diubah, sehingga seluruh proses koreksi dapat ditelusuri dan diulang.
+
+### 2.4 Exploratory Data Analysis
+
+**Distribusi kelas target** (Gambar `05-output/figures/fase-1-distribusi-target.png`). Dari 302 pasien, 138 pasien (45,7%) tergolong sakit jantung dan 164 pasien (54,3%) tergolong sehat. Kedua kelas cukup seimbang, sehingga teknik penyeimbangan data seperti SMOTE tidak diperlukan. Pembagian data latih dan data uji tetap dilakukan secara *stratified* agar proporsi kelas terjaga.
+
+**Tipe nyeri dada terhadap diagnosis** (Gambar `05-output/figures/fase-1-cp-vs-target.png`). Sebanyak 73% pasien dengan nyeri dada *asymptomatic* (`cp = 0`) tergolong sakit jantung, dan kelompok ini juga yang paling besar (143 pasien). Pada tipe nyeri dada lainnya, proporsi pasien sakit jantung jauh lebih rendah, yaitu 18% (*atypical angina*), 21% (*non-anginal pain*), dan 30% (*typical angina*). Artinya, tidak adanya keluhan nyeri dada yang khas bukan jaminan pasien sehat, sehingga skrining perlu memakai indikator lain.
 
 **Distribusi fitur numerik** (Gambar `05-output/figures/fase-1-numerik-vs-target.png`).
 
 | Fitur | Median kelas sehat | Median kelas sakit jantung |
 |---|---|---|
-| `age` | 58 tahun | 52 tahun |
+| `age` | 52 tahun | 58 tahun |
 | `trestbps` | 130 mm Hg | 130 mm Hg |
-| `chol` | 249 mg/dl | 234,5 mg/dl |
-| `thalach` | 142 | 161 |
+| `chol` | 234,5 mg/dl | 249 mg/dl |
+| `thalach` | 161 | 142 |
 
-Detak jantung maksimum (`thalach`) adalah fitur numerik yang paling jelas memisahkan kedua kelas. Sebaliknya, distribusi tekanan darah (`trestbps`) dan kolesterol (`chol`) hampir tumpang tindih antara kedua kelas.
+Detak jantung maksimum (`thalach`) adalah fitur numerik yang paling jelas memisahkan kedua kelas. Pasien sakit jantung mencapai detak maksimum yang lebih rendah saat tes latihan, sesuai dengan kondisi jantung yang aliran darahnya terganggu. Pasien sakit jantung juga cenderung lebih tua. Sebaliknya, distribusi tekanan darah (`trestbps`) dan kolesterol (`chol`) hampir tumpang tindih antara kedua kelas.
 
-**Korelasi antar fitur** (Gambar `05-output/figures/fase-1-korelasi.png`). Lima fitur dengan korelasi terkuat terhadap `target` adalah `ca` (-0,46), `exang` (-0,44), `cp` (0,43), `oldpeak` (-0,43), dan `thalach` (0,42). Kolesterol (-0,08) dan tekanan darah (-0,15) memiliki korelasi lemah. Temuan ini berbeda dengan dugaan awal pada panduan tugas bahwa kolesterol dan tekanan darah adalah prediktor terkuat, sehingga akan diuji kembali melalui analisis faktor risiko dari model. Korelasi antar fitur tertinggi adalah `oldpeak` dengan `slope` (-0,58). Tidak ada pasangan fitur dengan korelasi di atas 0,8, sehingga seluruh fitur dipertahankan.
+**Korelasi antar fitur** (Gambar `05-output/figures/fase-1-korelasi.png`). Lima fitur dengan korelasi terkuat terhadap `target` adalah `ca` (0,46), `exang` (0,44), `cp` (-0,43), `oldpeak` (0,43), dan `thalach` (-0,42). Arah korelasinya sesuai pengetahuan medis: jumlah pembuluh darah yang tampak menyempit, angina saat olahraga, dan depresi ST yang lebih besar berkaitan dengan penyakit jantung. Kolesterol (0,08) dan tekanan darah (0,15) memiliki korelasi lemah. Temuan ini berbeda dengan dugaan awal pada panduan tugas bahwa kolesterol dan tekanan darah adalah prediktor terkuat, sehingga akan diuji kembali melalui analisis faktor risiko dari model. Korelasi antar fitur tertinggi adalah `oldpeak` dengan `slope` (-0,58). Tidak ada pasangan fitur dengan korelasi di atas 0,8, sehingga seluruh fitur dipertahankan.
 
-### 2.4 Catatan Anomali Label Target
+### 2.5 Validasi Klinis Setelah Koreksi Label
 
-| Indikator | Rata-rata kelas 0 | Rata-rata kelas 1 |
+| Indikator | Rata-rata pasien sehat (0) | Rata-rata pasien sakit jantung (1) |
 |---|---|---|
-| `thalach` | 139,10 | 158,38 |
-| `oldpeak` | 1,59 | 0,59 |
-| `exang` | 0,55 | 0,14 |
+| `thalach` (detak jantung maksimum) | 158,38 | 139,10 |
+| `oldpeak` (depresi ST) | 0,59 | 1,59 |
+| `exang` (proporsi angina saat olahraga) | 0,14 | 0,55 |
+| `ca` (jumlah pembuluh darah menyempit) | 0,27 | 1,15 |
+| `sex` (proporsi laki-laki) | 0,56 | 0,83 |
+| `age` (usia) | 52,59 | 56,60 |
 
-Secara medis, pasien penyakit jantung umumnya memiliki detak jantung maksimum yang lebih rendah, depresi ST yang lebih tinggi, dan lebih sering mengalami angina saat olahraga. Data ini menunjukkan pola yang berkebalikan pada kelas `target = 1`. Anomali ini dikenal pada Heart Disease UCI versi Kaggle, dan diduga berasal dari perbedaan pengodean label dengan dataset UCI asli. Penelitian ini tetap memakai definisi label dari panduan tugas (`1` = ada penyakit jantung) agar evaluasi model sesuai dengan kriteria penilaian. Dampak anomali ini terhadap interpretasi faktor risiko dibahas pada bab Hasil dan Pembahasan.
+Setelah koreksi, seluruh indikator menunjukkan pola yang sesuai dengan pengetahuan medis. Konsistensi ini menjadi pemeriksaan tambahan bahwa koreksi label sudah tepat. Seluruh tahap berikutnya memakai label yang sudah dikoreksi, sehingga metrik *Recall* kelas 1 benar-benar mengukur kemampuan model menemukan pasien sakit jantung.
 
 ## Isi Slide
 
@@ -101,12 +121,21 @@ Secara medis, pasien penyakit jantung umumnya memiliki detak jantung maksimum ya
 
 Gambar: tidak ada (slide teks).
 
+### Slide: Temuan Kualitas Data
+
+- Label `target` versi Kaggle terbukti terbalik 100% setelah 303 baris dicocokkan dengan data UCI asli.
+- Kamus data `cp` dan `thal` versi Kaggle juga keliru, jadi disusun ulang dari data asli.
+- 1 baris duplikat dihapus, dan 6 nilai tersembunyi (`thal = 0`, `ca = 4`) ditandai sebagai missing value.
+- Semua koreksi dilakukan di notebook. File dataset asli tidak diubah.
+
+Gambar: tabel pencocokan label (subbab 2.3).
+
 ### Slide: Insight EDA
 
-- Data: 302 pasien setelah 1 duplikat dihapus. Kelas cukup seimbang (54% sakit, 46% sehat).
-- Tipe nyeri dada (`cp`) dan detak jantung maksimum (`thalach`) paling jelas membedakan pasien sakit dan sehat.
-- Kolesterol dan tekanan darah ternyata hanya berkorelasi lemah dengan diagnosis (-0,08 dan -0,15).
-- Ada anomali label pada dataset versi Kaggle. Label tetap mengikuti panduan, dan dampaknya dibahas di bagian interpretasi.
+- 302 pasien: 138 sakit jantung (46%) dan 164 sehat (54%), cukup seimbang.
+- 73% pasien tanpa nyeri dada khas (*asymptomatic*) ternyata sakit jantung.
+- Pasien sakit jantung: detak jantung maksimum lebih rendah, lebih sering angina saat olahraga, dan lebih banyak pembuluh darah menyempit.
+- Kolesterol dan tekanan darah hanya berkorelasi lemah dengan diagnosis (0,08 dan 0,15).
 
 Gambar: `fase-1-cp-vs-target.png` dan `fase-1-korelasi.png` (atau `fase-1-numerik-vs-target.png` jika ruang slide terbatas).
 
