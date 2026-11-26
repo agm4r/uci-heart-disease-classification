@@ -11,7 +11,7 @@ Pengerjaan per fase dipilih supaya setiap fase bisa direview dan dipahami sebelu
 
 ## Deliverable
 
-1. Notebook `03-notebook/KelompokX_Heart_Disease_Prediction.ipynb`. `X` diganti nomor atau nama kelompok saat finalisasi. Notebook harus bisa Run All dari awal sampai akhir tanpa error.
+1. Notebook `03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb`. Nama file sudah memakai nomor kelompok (Kelompok 6). Notebook harus bisa Run All dari awal sampai akhir tanpa error.
 2. Laporan Teknis & Bisnis (PDF) dengan bab: Cover, Pendahuluan, Metodologi, Hasil & Pembahasan, Kesimpulan & Rekomendasi Klinis, Daftar Pustaka.
 3. Slide presentasi (PPTX, diekspor juga ke PDF) dengan alur: Masalah Klinis, Analisis Data, Solusi Model, Dampak & Rekomendasi Medis.
 
@@ -107,12 +107,12 @@ User memilih A. Untuk menghindari conflict, anggota lain mengirim kode mereka, l
 - Faktor risiko dari koefisien Logistic Regression dan Permutation Importance untuk SVM dan KNN, dengan interpretasi medis yang memperhitungkan anomali label.
 - Minimal 3 rekomendasi klinis.
 - Grafik ringkasan bergaya dashboard dan simulasi skrining beberapa pasien contoh.
-- Finalisasi: rename notebook, Run All bersih, susun laporan (DOCX lalu PDF) dan slide (PPTX lalu PDF) dari draf tiap fase.
+- Finalisasi: Run All bersih, susun laporan (DOCX lalu PDF) dan slide (PPTX lalu PDF) dari draf tiap fase.
 
 ## Struktur folder baru
 
 ```
-03-notebook/KelompokX_Heart_Disease_Prediction.ipynb
+03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb
 05-output/figures/fase-N-<nama-grafik>.png
 06-laporan/drafts/fase-N.md        # draf bab laporan + isi slide per fase
 06-laporan/Laporan_Heart_Disease.docx / .pdf
@@ -127,4 +127,4 @@ Notebook lama `03-notebook/heart-disease-uci-dataset.ipynb` (isinya latihan regr
 - Gaya visual grafik, misalnya palet warna dan ukuran.
 - Rentang nilai grid di luar yang disebut panduan, misalnya nilai `n_neighbors`.
 - Cara generate DOCX dan PPTX (misalnya `python-docx` dan `python-pptx`) serta cara konversi ke PDF (Microsoft Office terpasang di laptop user).
-- Isi Cover (nama anggota, NIM, nomor kelompok) diisi placeholder sampai user memberikan datanya.
+- Isi Cover memakai Kelompok 6. Nama anggota dan NIM diisi placeholder sampai user memberikan datanya.

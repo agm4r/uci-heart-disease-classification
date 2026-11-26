@@ -1,6 +1,6 @@
 # Draf Laporan dan Slide: Fase 1 (Clinical & Data Understanding)
 
-Draf ini adalah bahan untuk laporan PDF dan slide presentasi. Semua angka diambil dari output notebook `03-notebook/KelompokX_Heart_Disease_Prediction.ipynb` (section Fase 1). Kalau notebook berubah, angka di sini perlu dicek ulang.
+Draf ini adalah bahan untuk laporan PDF dan slide presentasi. Semua angka diambil dari output notebook `03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb` (section Fase 1). Kalau notebook berubah, angka di sini perlu dicek ulang.
 
 ## Bab 1 Pendahuluan
 

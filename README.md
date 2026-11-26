@@ -1,12 +1,12 @@
 # Prediksi Penyakit Jantung (Tugas Kelompok Machine Learning)
 
-Repo ini berisi pengerjaan Studi Kasus 4: Diagnosis Penyakit Jantung, mata kuliah Machine Learning. Kita membangun model klasifikasi (SVM, KNN, dan Logistic Regression) untuk menandai pasien berisiko penyakit jantung dari data pemeriksaan medis.
+Repo ini berisi pengerjaan Kelompok 6 untuk Studi Kasus 4: Diagnosis Penyakit Jantung, mata kuliah Machine Learning. Kita membangun model klasifikasi (SVM, KNN, dan Logistic Regression) untuk menandai pasien berisiko penyakit jantung dari data pemeriksaan medis.
 
 Tugas dikerjakan **fase per fase** sesuai panduan. Tidak ada pembagian tetap siapa mengerjakan fase apa. Siapa pun yang sedang senggang boleh mengambil fase berikutnya yang belum dikerjakan, asalkan mengikuti alur di dokumen ini.
 
 Hasil akhir yang dikumpulkan:
 
-1. Notebook `03-notebook/KelompokX_Heart_Disease_Prediction.ipynb` yang bisa Run All tanpa error.
+1. Notebook `03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb` yang bisa Run All tanpa error.
 2. Laporan Teknis & Bisnis (PDF).
 3. Slide presentasi (PPTX/PDF).
 
@@ -28,7 +28,7 @@ Tabel ini diperbarui setiap kali sebuah fase selesai di-merge ke `main`.
 01-panduan-tugas/      panduan tugas dari dosen (acuan utama: PDF Studi Kasus 4)
 02-dataset/            heart_disease.csv (dataset utama, JANGAN diubah)
                        uci-cleveland-asli.data (data UCI asli, dipakai sebagai bukti koreksi label)
-03-notebook/           KelompokX_Heart_Disease_Prediction.ipynb (notebook utama)
+03-notebook/           Kelompok6_Heart_Disease_Prediction.ipynb (notebook utama)
 04-materi-referensi/   materi kuliah pendukung
 05-output/figures/     grafik hasil notebook, nama file: fase-N-<nama>.png
 06-laporan/drafts/     draf tulisan laporan dan isi slide per fase: fase-N.md
@@ -64,7 +64,7 @@ Pengguna macOS atau Linux cukup mengganti `.venv\Scripts\...` dengan `.venv/bin/
 ### 2. Buka notebook di VS Code
 
 1. Install extension **Jupyter** dan **Python** di VS Code.
-2. Buka `03-notebook/KelompokX_Heart_Disease_Prediction.ipynb`.
+2. Buka `03-notebook/Kelompok6_Heart_Disease_Prediction.ipynb`.
 3. Klik pilihan kernel di pojok kanan atas, pilih **Select Another Kernel**, lalu **Python Environments**, lalu pilih yang mengarah ke `.venv`.
 4. Klik **Run All**.
 
@@ -76,7 +76,7 @@ Perintah berikut menjalankan seluruh notebook dari awal dengan kernel baru, sama
 
 ```bash
 cd 03-notebook
-../.venv/Scripts/jupyter nbconvert --to notebook --execute --inplace KelompokX_Heart_Disease_Prediction.ipynb
+../.venv/Scripts/jupyter nbconvert --to notebook --execute --inplace Kelompok6_Heart_Disease_Prediction.ipynb
 ```
 
 Kalau perintah ini selesai tanpa error, notebook aman di-commit. Kalau ada cell `assert` yang gagal, perintahnya berhenti dan menunjukkan cell yang bermasalah.
@@ -236,7 +236,7 @@ Checklist ini merangkum panduan dosen dan keputusan kelompok. Kalau ada yang ber
 - [ ] Faktor risiko utama dari koefisien Logistic Regression dan Permutation Importance untuk SVM/KNN, beserta interpretasi medisnya
 - [ ] Minimal 3 rekomendasi klinis untuk rumah sakit
 - [ ] Grafik ringkasan bergaya dashboard dan simulasi skrining beberapa pasien contoh
-- [ ] Ganti nama notebook `KelompokX_...` dengan nomor atau nama kelompok, lalu pastikan Run All bersih
+- [ ] Pastikan Run All bersih di notebook final `Kelompok6_Heart_Disease_Prediction.ipynb`
 - [ ] Susun laporan (DOCX lalu PDF) dan slide (PPTX lalu PDF) dari semua file `06-laporan/drafts/fase-N.md`
 
 ## Aturan Draf Laporan
