@@ -27,7 +27,7 @@ Data dibagi dengan rasio 80:20 memakai `train_test_split` dengan parameter `stra
 
 ### 2.8 Encoding, Imputasi, dan Feature Scaling
 
-Fitur nominal diubah dengan **One-Hot Encoding**, yaitu mengubah satu kolom kategori menjadi beberapa kolom bernilai 0 atau 1, satu kolom untuk setiap kategori. Langkah ini diperlukan karena kode kategori seperti `cp = 0` sampai `cp = 3` tidak memiliki urutan. Tanpa encoding, algoritma akan menganggap kode yang lebih besar memiliki nilai yang lebih besar. Encoder diatur dengan `handle_unknown="ignore"`, sehingga kategori yang tidak muncul di data latih (misalnya `restecg = 2`, yang hanya dimiliki 4 pasien) tidak menyebabkan error.
+Fitur nominal diubah dengan **One-Hot Encoding**, yaitu mengubah satu kolom kategori menjadi beberapa kolom bernilai 0 atau 1, satu kolom untuk setiap kategori. Langkah ini diperlukan karena kode kategori seperti `cp = 0` sampai `cp = 3` tidak memiliki urutan. Tanpa encoding, algoritma akan menganggap kode yang lebih besar memiliki nilai yang lebih besar. Encoder diatur dengan `handle_unknown="ignore"`, sehingga kategori yang tidak dikenal tidak menyebabkan error. Kondisi ini bisa terjadi pada kategori langka seperti `restecg = 2` (hanya 4 pasien), yang mungkin tidak muncul di bagian latih salah satu fold saat cross-validation, atau pada pasien baru dengan kode di luar rentang dataset.
 
 Missing value pada `thal` (2 baris) dan `ca` (4 baris) diisi dengan **modus** menggunakan `SimpleImputer`. Modus yang dipelajari dari data latih adalah `thal = 2` (normal) dan `ca = 0`.
 
@@ -51,7 +51,19 @@ Seluruh langkah preprocessing disusun dalam satu `ColumnTransformer`. Statistik 
 | `thalach` | 149,93 | 21,93 | 0,00 | 1,00 | -0,08 | 1,19 |
 | `oldpeak` | 1,06 | 1,16 | 0,00 | 1,00 | -0,08 | 0,98 |
 
-Data latih memiliki mean tepat 0 dan standard deviation tepat 1 setelah scaling. Data uji hanya mendekati nilai tersebut, karena data uji di-transform memakai statistik data latih. Hal ini membuktikan bahwa informasi dari data uji tidak ikut digunakan dalam proses preprocessing (Gambar `05-output/figures/fase-2-scaling.png`).
+Data latih memiliki mean tepat 0 dan standard deviation tepat 1 setelah scaling, sedangkan data uji hanya mendekati nilai tersebut karena di-transform memakai statistik data latih. Nilai mean data uji yang tidak tepat 0 merupakan akibat dari cara transform tersebut, tetapi belum menjadi bukti, karena scaler yang di-fit dengan seluruh data juga menghasilkan mean data uji yang tidak tepat 0 (Gambar `05-output/figures/fase-2-scaling.png`).
+
+Bukti tidak adanya kebocoran diperoleh dari parameter scaler itu sendiri:
+
+| Fitur | $\mu$ scaler | Mean data latih | Mean seluruh data | $\sigma$ scaler | Std data latih | Std seluruh data |
+|---|---|---|---|---|---|---|
+| `age` | 54,52 | 54,52 | 54,42 | 8,99 | 8,99 | 9,03 |
+| `trestbps` | 131,26 | 131,26 | 131,60 | 17,55 | 17,55 | 17,53 |
+| `chol` | 248,88 | 248,88 | 246,50 | 53,33 | 53,33 | 51,67 |
+| `thalach` | 149,93 | 149,93 | 149,57 | 21,93 | 21,93 | 22,87 |
+| `oldpeak` | 1,06 | 1,06 | 1,04 | 1,16 | 1,16 | 1,16 |
+
+Nilai $\mu$ dan $\sigma$ yang disimpan scaler identik dengan statistik data latih dan berbeda dengan statistik seluruh data. Hal ini membuktikan bahwa scaler hanya belajar dari 241 pasien data latih, sehingga informasi dari 61 pasien data uji tidak ikut digunakan dalam proses preprocessing.
 
 Pada tahap pemodelan, `ColumnTransformer` ini dipasang di awal `Pipeline` setiap model. Dengan cara ini, saat K-Fold Cross-Validation statistik preprocessing dihitung ulang di setiap fold hanya dari bagian data latih fold tersebut, sehingga kebocoran data juga tercegah selama proses tuning.
 
