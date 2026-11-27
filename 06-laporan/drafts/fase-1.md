@@ -45,16 +45,16 @@ Penelitian ini menggunakan Heart Disease UCI Dataset versi Kaggle. Dataset ini b
 | `trestbps` | Tekanan darah saat istirahat (mm Hg) | Numerik |
 | `chol` | Kadar kolesterol serum (mg/dl) | Numerik |
 | `fbs` | Gula darah puasa > 120 mg/dl (1 = ya, 0 = tidak) | Biner |
-| `restecg` | Hasil EKG saat istirahat (0, 1, 2) | Nominal |
+| `restecg` | Hasil EKG saat istirahat (0 = kemungkinan hipertrofi ventrikel kiri, 1 = normal, 2 = kelainan gelombang ST-T) | Nominal |
 | `thalach` | Detak jantung maksimum saat tes latihan | Numerik |
 | `exang` | Angina yang dipicu olahraga (1 = ya, 0 = tidak) | Biner |
 | `oldpeak` | Depresi segmen ST saat latihan dibanding saat istirahat | Numerik |
-| `slope` | Kemiringan segmen ST pada puncak latihan (0, 1, 2) | Nominal |
+| `slope` | Kemiringan segmen ST pada puncak latihan (0 = downsloping, 1 = flat, 2 = upsloping) | Nominal |
 | `ca` | Jumlah pembuluh darah utama yang terlihat lewat fluoroskopi (0 sampai 3) | Ordinal |
 | `thal` | Hasil tes thalium (1 = fixed defect, 2 = normal, 3 = reversible defect) | Nominal |
 | `target` | Diagnosis (1 = ada penyakit jantung, 0 = tidak ada), setelah dikoreksi | Target |
 
-Arti kode `cp`, `thal`, dan `target` pada tabel di atas berbeda dengan dokumentasi yang beredar di halaman Kaggle. Kamus ini disusun dari hasil pencocokan dengan dataset UCI asli (lihat subbab 2.3).
+Arti kode `cp`, `restecg`, `slope`, `thal`, dan `target` pada tabel di atas berbeda dengan dokumentasi yang beredar di halaman Kaggle. Kamus ini disusun dari hasil pencocokan dengan dataset UCI asli (lihat subbab 2.3).
 
 ### 2.2 Pemeriksaan Kualitas Data
 
@@ -74,7 +74,7 @@ Untuk memastikannya, dataset dicocokkan dengan sumber aslinya, yaitu file `proce
 | `target = 0` | 0 | 138 |
 | `target = 1` | 165 | 0 |
 
-Hasil ini menunjukkan bahwa label `target` versi Kaggle terbalik 100%. Pencocokan yang sama juga menunjukkan bahwa kode `cp` dan `thal` versi Kaggle memiliki arti yang berbeda dengan dokumentasinya, sehingga kamus data pada subbab 2.1 disusun ulang berdasarkan data asli.
+Hasil ini menunjukkan bahwa label `target` versi Kaggle terbalik 100%. Pencocokan yang sama juga menunjukkan bahwa kode `cp`, `restecg`, `slope`, dan `thal` versi Kaggle memiliki arti yang berbeda dengan dokumentasinya, sehingga kamus data pada subbab 2.1 disusun ulang berdasarkan data asli.
 
 Label kemudian dikoreksi di notebook dengan `target = 1 - target`, sehingga nilai `1` benar-benar berarti ada penyakit jantung, sesuai definisi pada panduan tugas. File dataset asli tidak diubah, sehingga seluruh proses koreksi dapat ditelusuri dan diulang.
 

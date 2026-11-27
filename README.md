@@ -17,7 +17,7 @@ Tabel ini diperbarui setiap kali sebuah fase selesai di-merge ke `main`.
 | Fase | Isi | Status |
 |---|---|---|
 | 1 | Clinical & Data Understanding | Selesai |
-| 2 | Data Preparation | Belum dikerjakan |
+| 2 | Data Preparation | Selesai |
 | 3 | Modeling (SVM, KNN, Logistic Regression) | Belum dikerjakan |
 | 4 | Model Evaluation & Improvement | Belum dikerjakan |
 | 5 | Clinical Insight, Laporan, dan Slide | Belum dikerjakan |
@@ -94,7 +94,7 @@ Kalau perintah ini selesai tanpa error, notebook aman di-commit. Kalau ada cell 
 Wajib dibaca sebelum mengerjakan fase mana pun. Detailnya ada di notebook bagian 1.7 sampai 1.10.
 
 1. **Label `target` di file CSV versi Kaggle terbalik.** Setelah 303 baris dicocokkan dengan data UCI asli, semua baris `target = 1` ternyata pasien sehat. Notebook sudah membalik label ini, jadi di variabel `df` nilai `1` benar-benar berarti sakit jantung (138 pasien) dan `0` berarti sehat (164 pasien). Jangan membaca ulang CSV di fase berikutnya. Selalu pakai `df` dari Fase 1.
-2. **Kamus data `cp` dan `thal` di halaman Kaggle keliru.** Arti yang benar: `cp` 0 = asymptomatic, 1 = atypical angina, 2 = non-anginal pain, 3 = typical angina; `thal` 1 = fixed defect, 2 = normal, 3 = reversible defect.
+2. **Kamus data `cp`, `restecg`, `slope`, dan `thal` di halaman Kaggle keliru.** Arti yang benar: `cp` 0 = asymptomatic, 1 = atypical angina, 2 = non-anginal pain, 3 = typical angina; `restecg` 0 = kemungkinan hipertrofi ventrikel kiri, 1 = normal, 2 = kelainan gelombang ST-T; `slope` 0 = downsloping, 1 = flat, 2 = upsloping; `thal` 1 = fixed defect, 2 = normal, 3 = reversible defect.
 3. **`thal` dan `ca` punya missing value (NaN).** Ada 2 baris di `thal` dan 4 baris di `ca`. Nilainya sengaja belum diisi. Pengisian dengan modus dilakukan di Fase 2, di dalam pipeline setelah train-test split, supaya tidak terjadi data leakage (informasi data uji bocor ke proses training).
 4. File `02-dataset/heart_disease.csv` tidak boleh diubah. Semua koreksi dilakukan lewat kode di notebook.
 
@@ -194,6 +194,16 @@ docs(fase-2): tambah draf bab metodologi preprocessing
 | `format_sumbu_id(ax.yaxis, desimal, persen)` | Mengubah label angka di sumbu grafik agar memakai koma |
 | `LABEL_TARGET`, `WARNA_TARGET` | Label "Sehat (0)" dan "Sakit Jantung (1)" beserta warnanya |
 
+### Variabel dari Fase 2 yang bisa langsung dipakai
+
+| Nama | Isi |
+|---|---|
+| `X`, `y` | 13 fitur dan label dari `df` (302 pasien) |
+| `X_train`, `y_train` | 241 pasien data latih (110 sakit) |
+| `X_test`, `y_test` | 61 pasien data uji (28 sakit). Hanya dipakai untuk evaluasi akhir di Fase 4 |
+| `preprocessor` | `ColumnTransformer` yang **belum di-fit**: scaling, imputasi, dan One-Hot Encoding. Hasilnya 22 fitur. Pasang di awal `Pipeline` setiap model, jangan di-fit manual |
+| `KOLOM_NUMERIK`, `KOLOM_NOMINAL`, `KOLOM_ORDINAL`, `KOLOM_BINER` | Daftar kolom per kelompok |
+
 ## Checklist per Fase
 
 Checklist ini merangkum panduan dosen dan keputusan kelompok. Kalau ada yang berbeda, PDF panduan tetap menjadi acuan utama.
@@ -206,16 +216,16 @@ Checklist ini merangkum panduan dosen dan keputusan kelompok. Kalau ada yang ber
 - [x] EDA: distribusi target, `cp` vs target, `age`/`trestbps`/`chol`/`thalach` vs target, heatmap korelasi
 - [x] Draf laporan `06-laporan/drafts/fase-1.md`
 
-### Fase 2: Data Preparation
+### Fase 2: Data Preparation (selesai)
 
-- [ ] Pisahkan fitur dan target: `X = df.drop(columns="target")`, `y = df["target"]`
-- [ ] Train-test split 80:20 dengan `stratify=y` dan `random_state=RANDOM_STATE`
-- [ ] One-Hot Encoding untuk fitur nominal `cp`, `restecg`, `slope`, `thal`. `ca` tetap numerik karena nilainya berurutan.
-- [ ] Imputasi modus untuk `thal` dan `ca`
-- [ ] StandardScaler untuk `age`, `trestbps`, `chol`, `thalach`, `oldpeak`
-- [ ] Susun encoding, imputasi, dan scaling dalam `ColumnTransformer`, supaya bisa dimasukkan ke `Pipeline` di Fase 3 dan fit hanya terjadi di data latih
-- [ ] Tunjukkan bukti tidak ada data leakage: fit di `X_train`, transform di `X_test`, lalu bandingkan statistik sebelum dan sesudah scaling
-- [ ] Draf laporan: Metodologi bagian Preprocessing & Feature Scaling
+- [x] Pisahkan fitur dan target: `X = df.drop(columns="target")`, `y = df["target"]`
+- [x] Train-test split 80:20 dengan `stratify=y` dan `random_state=RANDOM_STATE`
+- [x] One-Hot Encoding untuk fitur nominal `cp`, `restecg`, `slope`, `thal`. `ca` tetap numerik karena nilainya berurutan.
+- [x] Imputasi modus untuk `thal` dan `ca`
+- [x] StandardScaler untuk `age`, `trestbps`, `chol`, `thalach`, `oldpeak`
+- [x] Susun encoding, imputasi, dan scaling dalam `ColumnTransformer`, supaya bisa dimasukkan ke `Pipeline` di Fase 3 dan fit hanya terjadi di data latih
+- [x] Tunjukkan bukti tidak ada data leakage: fit di `X_train`, transform di `X_test`, lalu bandingkan statistik sebelum dan sesudah scaling
+- [x] Draf laporan: Metodologi bagian Preprocessing & Feature Scaling
 
 ### Fase 3: Modeling
 
